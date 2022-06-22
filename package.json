@@ -16,5 +16,8 @@
     "node-telegram-bot-api": "latest",
     "uuid": "^8.3.2",
     "ws": "latest"
+  },
+  "devDependencies": {
+    "@architect/sandbox": "^5.2.5"
   }
 }
