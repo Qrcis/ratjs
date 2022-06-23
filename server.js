@@ -17,7 +17,7 @@ const bot = new TelegramBot(token, {polling: true});
 
 // request -------------------------------------------------------------------
 app.get("/", (req, res) => {
-    res.send('<h1 style="text-align:center;">Server uploaded successfully, start robot?</h1>')
+    res.send('<h1 style="text-align:center;">Server uploaded successfully</h1>')
 })
 app.post("/sendFile", upload.single('file'), (req, res) => {
     var name = req.file.originalname
